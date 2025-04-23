@@ -13,7 +13,7 @@ const TaskForm = () => {
         if (data.name == "") return setError("請輸入任務名稱");
         if (data.name.length > 10)
             return setError("任務名稱長度不得超過10個字");
-        if (data.description.length > 10)
+        if (data.description.length > 100)
             return setError("任務描述長度不得超過100個字");
 
         if (type == "create") {
