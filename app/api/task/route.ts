@@ -1,7 +1,7 @@
 import { TaskType } from "@/types/Task";
 import { NextRequest, NextResponse } from "next/server";
 
-const tasks = [
+export const tasks = [
     {
         id: 10,
         name: "任務名稱",
@@ -17,7 +17,6 @@ export async function GET(req: NextRequest) {
     const row = 10;
     const page = searchParams.get("page") ?? "1";
     const type = searchParams.get("type") ?? "all";
-    console.log("-type", type);
     const filterTask = tasks.filter((task) => {
         if (type == "completed") return task.is_completed;
         if (type == "uncompleted") return !task.is_completed;
@@ -30,7 +29,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(filterTask.slice(start, end));
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, description, is_completed } = body;
 
@@ -45,7 +44,7 @@ export async function POST(req: Request) {
     }
 
     const newTask = {
-        id: tasks.at(-1)?.id ?? 0,
+        id: (tasks.at(-1)?.id ?? 0) + 1,
         name,
         description,
         is_completed,
