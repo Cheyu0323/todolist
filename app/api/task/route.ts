@@ -1,16 +1,5 @@
-import { TaskType } from "@/types/Task";
+import tasks from "@/data/tasks";
 import { NextRequest, NextResponse } from "next/server";
-
-export const tasks = [
-    {
-        id: 10,
-        name: "任務名稱",
-        description: "任務描述",
-        is_completed: false,
-        created_at: "2023-01-01T17:00:00.000Z",
-        updated_at: "2023-01-01T17:00:00.000Z",
-    },
-] as Array<TaskType>;
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);

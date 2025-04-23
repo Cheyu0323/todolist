@@ -1,11 +1,10 @@
+import tasks from "@/data/tasks";
 import { NextRequest, NextResponse } from "next/server";
-import { tasks } from "../route";
 
-export async function PUT(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    const { id } = params;
+type Params = Promise<{ id: string }>;
+
+export async function PUT(req: NextRequest, { params }: { params: Params }) {
+    const { id } = await params;
     const body = await req.json();
     const { name, description } = body;
 
@@ -39,11 +38,8 @@ export async function PUT(
     return NextResponse.json(updateTask);
 }
 
-export async function PATCH(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    const { id } = params;
+export async function PATCH(req: NextRequest, { params }: { params: Params }) {
+    const { id } = await params;
 
     const findTask = tasks.findIndex((task) => task.id == +id);
     if (findTask == -1)
@@ -65,11 +61,8 @@ export async function PATCH(
     return NextResponse.json(updateTask);
 }
 
-export async function DELETE(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    const { id } = params;
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
+    const { id } = await params;
 
     const findTask = tasks.findIndex((task) => task.id == +id);
     if (findTask == -1)
