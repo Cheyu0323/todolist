@@ -55,11 +55,10 @@ const TaskForm = () => {
                 </div>
                 <div className="flex gap-x-1">
                     任務描述:
-                    <input
-                        type="text"
+                    <textarea
                         className="border border-gray-300 flex-1"
                         value={data.description}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                             updateInput("description", e.target.value)
                         }
                     />

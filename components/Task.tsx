@@ -20,16 +20,16 @@ const Task: React.FC<TaskProps> = ({
     onCompleted,
 }) => {
     return (
-        <div className="flex-1 basis-md px-6 pr-10 p-1 rounded-md bg-white relative min-w-0 w-full overflow-hidden">
+        <div className="px-6 pr-10 p-1 rounded-md bg-white relative min-w-0 w-full overflow-hidden">
             <div
                 className={`absolute top-1.5 left-1.5 w-1.5 h-[calc(100%-0.75rem)] rounded-xl ${
                     is_completed ? "bg-green-400" : "bg-blue-500"
                 }`}
             ></div>
             <div className="font-bold text-lg tracking-wide">{name}</div>
-            <div className="text-black/80">{description}</div>
-            <div className="text-sm text-gray-300 mt-auto">{updated_at}</div>
-            <div className="absolute right-1 top-0 w-8 py-1 h-full flex flex-col justify-between items-center">
+            <div className="text-black/80 whitespace-pre-line">{description}</div>
+            <div className="text-sm text-gray-300">{updated_at}</div>
+            <div className="absolute right-1 top-0 w-8 py-1 h-full flex flex-col gap-y-0.5 items-center">
                 {is_completed ? (
                     <SquareCheckBig
                         onClick={() => onCompleted(id)}
