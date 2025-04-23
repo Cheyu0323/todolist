@@ -2,16 +2,25 @@
 import Task from "@/components/Task";
 import React, { Suspense, useEffect, useState } from "react";
 import { Plus, CheckCheck, ChevronLeft, ChevronRight } from "lucide-react";
-import TaskForm from "@/components/TaskForm";
-import useTaskFormStore from "@/store/useTaskFormStore";
+import TaskForm, { TaskFormInput } from "@/components/TaskForm";
 import useTaskStore from "@/store/useTaskStore";
+import { TaskType } from "@/types/Task";
 
 const Home = () => {
-    const { openTaskForm } = useTaskFormStore();
-    const { tasks, fetchTasks, deleteTask, toggleTaskComplete } =
-        useTaskStore();
+    const {
+        tasks,
+        fetchTasks,
+        updateTask,
+        createTask,
+        deleteTask,
+        toggleTaskComplete,
+    } = useTaskStore();
     const [isCompleted, setIsCompleted] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
+
+    const [isTaskFormOpen, setIsTaskFormOpen] = useState<boolean>(false);
+    const [editTask, setEditTask] = useState<null | TaskType>(null);
+
     useEffect(() => {
         if (isCompleted) {
             fetchTasks("all", page);
@@ -29,13 +38,15 @@ const Home = () => {
     };
     const handleEditTask = (id: number) => {
         const findIndex = tasks.findIndex((task) => task.id == id);
-        openTaskForm({ type: "edit", data: tasks[findIndex] });
+        setEditTask(tasks[findIndex]);
+        setIsTaskFormOpen(true);
     };
     const handleToggleCompletedTask = (id: number) => {
         toggleTaskComplete(id);
     };
     const handleCreateNewTask = () => {
-        openTaskForm({ type: "create" });
+        setEditTask(null);
+        setIsTaskFormOpen(true);
     };
     const handleSwitchPage = (type: "prev" | "next") => {
         if (type == "prev") {
@@ -44,10 +55,29 @@ const Home = () => {
         }
         setPage((pre) => pre + 1);
     };
+    
+    const handleSubmit = (data: TaskFormInput) => {
+        if (editTask) {
+            updateTask({ id: editTask.id, ...data });
+        } else {
+            createTask(data);
+        }
+        setEditTask(null);
+        setIsTaskFormOpen(false);
+    };
+    const handleCloseTaskForm = () => {
+        setIsTaskFormOpen(false);
+    };
 
     return (
         <Suspense fallback={<>LOADING...</>}>
-            <TaskForm />
+            {isTaskFormOpen && (
+                <TaskForm
+                    defaultValue={editTask || undefined}
+                    onClose={handleCloseTaskForm}
+                    onSubmit={handleSubmit}
+                />
+            )}
             <main className="p-4 md:p-10 h-full relative">
                 <header className="font-extrabold text-3xl tracking-wider text-blue-600">
                     Task

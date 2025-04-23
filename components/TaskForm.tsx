@@ -1,13 +1,29 @@
-import useTaskFormStore from "@/store/useTaskFormStore";
-import useTaskStore from "@/store/useTaskStore";
 import { X } from "lucide-react";
 import React, { useState } from "react";
 
-const TaskForm = () => {
-    const { isActive, data, type, closeTaskForm, updateInput } =
-        useTaskFormStore();
-    const { createTask, updateTask } = useTaskStore();
+export type TaskFormInput = { name: string; description: string };
+
+type TaskFormProps = {
+    defaultValue?: TaskFormInput;
+    onClose: () => void;
+    onSubmit: ({ name, description }: TaskFormInput) => void;
+};
+
+const TaskForm: React.FC<TaskFormProps> = ({
+    defaultValue,
+    onClose,
+    onSubmit,
+}) => {
+    const [data, setData] = useState<TaskFormInput>(
+        defaultValue ?? { name: "", description: "" }
+    );
+    console.log("defaultValue", defaultValue, data);
     const [error, setError] = useState("");
+
+    const handleUpdateInput = (key: "name" | "description", value: string) => {
+        setData((prev) => ({ ...prev, [key]: value }));
+    };
+
     const handleSubmit = () => {
         setError("");
         if (data.name == "") return setError("請輸入任務名稱");
@@ -16,40 +32,29 @@ const TaskForm = () => {
         if (data.description.length > 100)
             return setError("任務描述長度不得超過100個字");
 
-        if (type == "create") {
-            createTask({ ...data });
-            closeTaskForm();
-            return;
-        }
-        if (data.id == null) return;
-        updateTask({ id: data.id, ...data });
-        closeTaskForm();
+        onSubmit(data);
     };
 
     return (
         <div
-            className={`absolute z-20 w-full h-screen duration-200 bg-black/40 flex items-center justify-center ${
-                isActive
-                    ? " opacity-100 pointer-events-auto"
-                    : " opacity-0 pointer-events-none"
-            }`}
+            className={`absolute z-20 w-full h-screen duration-200 bg-black/40 flex items-center justify-center`}
         >
             <div className="bg-white shadow-md px-8 py-5 rounded-lg flex flex-col gap-y-1.5">
                 <div className="text-xl font-bold tracking-wider pb-2">
-                    {type == "create" ? "New Task" : "Edit Task"}
+                    {defaultValue == null ? "New Task" : "Edit Task"}
                     <X
-                        onClick={closeTaskForm}
+                        onClick={onClose}
                         className="w-6 h-6 float-end cursor-pointer duration-150 hover:text-white hover:bg-red-500 rounded p-0.5"
                     />
                 </div>
-                <div className="flex gap-x-1">
+                <div className="flex gap-x-1 items-center">
                     任務名稱:
                     <input
                         type="text"
                         className="border border-gray-300 flex-1"
                         value={data.name}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            updateInput("name", e.target.value)
+                            handleUpdateInput("name", e.target.value)
                         }
                     />
                 </div>
@@ -59,7 +64,7 @@ const TaskForm = () => {
                         className="border border-gray-300 flex-1"
                         value={data.description}
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                            updateInput("description", e.target.value)
+                            handleUpdateInput("description", e.target.value)
                         }
                     />
                 </div>
@@ -68,7 +73,7 @@ const TaskForm = () => {
                     onClick={handleSubmit}
                     className="w-full bg-blue-500 p-1 rounded text-white cursor-pointer"
                 >
-                    {type == "create" ? "Create" : "Edit"}
+                    {defaultValue == null ? "Create" : "Edit"}
                 </button>
             </div>
         </div>
